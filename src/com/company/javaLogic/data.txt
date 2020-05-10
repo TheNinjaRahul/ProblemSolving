@@ -1,0 +1,249 @@
+ProdMasters
+HOME
+ABOUT US
+Spring Security OAuth Resource Server
+
+BY
+DEEPAK RAJ ILANGOVAN
+ON
+NOV 10, 2019
+IN
+SPRING
+In this article, we will look into how security is implemented for production application in most of the companies using spring oauth2. This is for providing API to API authentication mostly used in microservices architecture.
+
+Prerequisite
+Spring Boot
+Spring security with java configuration
+Oauth2 concepts
+Overview
+In traditional monolithic applications, authentication and authorization are handled by session-based authentication where the user logs in with credentials that are verified with database or LDAP or any other services. If the credentials are valid, then a session is created by j2ee containers such as tomcat or JBoss and used to prove that the same user is accessing the services. These sessions can be easily created and maintained in monolithic architecture but in microservices architecture, it becomes very difficult and tedious to maintain and sync sessions across various services and servers. To overcome this difficulty and to have seamless, fast and secure authentication between different services, token-based authentication services are extensively used in a microservices architecture.
+
+  There are many implementations and protocols for token-based authentication each with its own advantages and disadvantages. Of this Oauth became very popular and widely used due to its flexibility, availability, and adoption by many third party services. There are 2 versions of OAuth and they vastly differ from each other. The current version is Oauth2 and there are many articles on the internet that provides a deep explanation over the concepts. To proceed over the article, it is recommended to have a basic understanding of oauth2 and various authentication mechanisms it provides.
+
+Oauth2 in Spring Security
+Spring framework supports various modules and protocols and oauth2 is one of them. With the introduction of spring boot, it became very easy to implement oauth2 in its default configuration. However, as the spring security contains various modules and adding oauth2 authentication in combination of those modules will be confusing. The examples present in the internet will be of basic configuration and won’t suit the scenarios used in most of the companies. The following text provides you an in-depth explanation of spring security oauth2 configuration on the application side deployed in production.
+
+Authentication Server and Resource Server
+ In the spring oauth2 project, there are 2 parts. One is an authentication server and the other one is a resource server. In simple terms, the authentication server is where user or service credentials are authenticated and jwt token is generated. The resource server is where rest services are present or the data which needs to be protected is present. It validates jwt token and performs authorization of different services.
+
+Most of the examples present on the internet will show you how to configure both the authorization server and the resource server using spring security. But in actual production applications, dev teams will be working on only resource server and authorization and jwt token creation is done by some central server like ping federate.
+
+Generating Jwt Token
+As explained in the Authentication and Resource server section, the centralized servers like ping federate will be responsible for validating credentials and generate jwt tokens. These servers will be having POST rest endpoints that are invoked with post data containing credentials to retrieve the token. They mostly 2 types of oauth2 authentication mechanisms namely Authorization code and Client credentials. For API to API authentication, the client credentials authentication mechanism is used.
+
+  There are certain post data required to generate token and it varies for different authentication mechanisms used. For client credentials, the following data is required. Note it can vary from organization to organization as in some organizations additional details like issuer name, the timestamp  will be encoded in jwt token, but the following fields will be used by most organizations.
+
+   client secret –  its like password for client id so that some rogue applications won’t be able to get tokens using the same client id
+
+   Scope –  Roles to be added to jwt token. This will be used by resource for performing authorization
+
+   Grant type – Type of oauth2 authentication(Authorization code/Client Credentials)
+
+  Client id – the application id which needs to access the protected resource. Generally created during onboarding of the application in company-specific platforms
+
+After calling the rest API with the above-mentioned data, a jwt token will be sent to the caller.
+
+For eg., if we have to do it via postman it would look similar to this
+
+
+Image 1
+
+Image 2
+
+Image 3
+In postman under authorization tab you can give you authentication server URL which generates token, client id, client secret, scope and select grant type as client credentials to get the token. Once the request is successful, token will be added as an authentication header for the request as shown in image 3. You can also manage multiple tokens like for dev, sit, uat under this tab and test various profiles of your resource.
+
+Implementation of Resource server using spring oauth2 and spring jwt
+ As the authentication server is already available and the token can be generated, our task lies only in implementing the resource server part. This section takes a sample spring boot application and adds an oauth2 authentication mechanism.
+Note: This section assumes that you have an understanding of the spring security configuration.  For adding spring OAuth authentication, you will need the following spring dependencies
+
+               <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+                       <dependency>
+			<groupId>org.springframework.security.oauth.boot</groupId>
+			<artifactId>spring-security-oauth2-autoconfigure</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-jwt</artifactId>
+			<version>1.0.10.RELEASE</version>
+		</dependency>
+Note: As spring boot has dependency management config, i had not included a version for the starter security and oauth2-autoconfigure dependencies. It will be inherited from parent dependency.
+
+The next step is to create a Resource Server configuration. As with the spring security framework, spring oauth2 provides ResourceServerConfigurerAdapter on similar lines of WebSecurityConfigurerAdapter which can be extended to provide custom configuration.
+
+@EnableResourceServer
+@Configuration
+public class Oauth2ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
+
+    @Value("${spring.oauth2.jwt.issuer}")
+    private String issuer;
+    @Value("${spring.oauth2.jwt.issuer.cert}")
+    private String issuerCertFile;
+    @Value("${spring.oauth2.jwt.resourceId}")
+    private String resourceId;
+    @Override
+    public void configure(ResourceServerSecurityConfigurer resources) throws Exception { ---- 1
+        resources.resourceId(resourceId)
+                .authenticationManager(authenticationManagerBean())
+                .tokenServices(tokenService());
+    }
+
+    @Bean
+    public ResourceServerTokenServices tokenService() throws IOException, CustomTokenStoreException {     --- 2
+        DefaultTokenServices tokenServices = new DefaultTokenServices();
+        tokenServices.setTokenStore(tokenStore());
+        return tokenServices;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManagerBean() throws Exception { ----- 3
+        OAuth2AuthenticationManager authenticationManager = new OAuth2AuthenticationManager();
+        authenticationManager.setTokenServices(tokenService());
+        return authenticationManager;
+    }
+
+    @Bean
+    public JwtClaimsSetVerifier jwtClaimsSetVerifier() throws MalformedURLException { ------ 4
+        return new DelegatingJwtClaimsSetVerifier(Arrays.asList(new IssuerClaimVerifier(new URL(issuer))));
+    }
+
+    @Bean
+    public TokenStore tokenStore() throws IOException, CustomTokenStoreException { ------ 5
+        return new CustomTokenStore(jwtClaimsSetVerifier(),issuerCertFile);
+    }
+
+    @Override
+    public void configure(HttpSecurity http) throws Exception { ------ 6
+        http.httpBasic().disable().anonymous().and().authorizeRequests().antMatchers("/user/**").authenticated()
+                .antMatchers("/public/**").permitAll();
+    }
+
+}
+This is the main part of resource server configuration where the logic for authentication and reading, validating and extracting details from jwt token is configured. As you can see from the code, I had configured the authentication manager and token services there. There is a resource id which is the unique identifier for the application. However, this is optional.
+This is for parsing and validating tokens. It uses a token store that performs this function.
+This is the authentication manager configuration similar to the default spring security configuration. But as this is for oauth2 authentication, I had configured Oauth2AuthenticationManager and added token services.
+Note: If you want to implement custom authentication manager, then it should extend Oauth2AuthenticationManager
+
+This is for validating details like issuer, username present in jwt token. The jwt payload is decoded and passed as Map in each claims set verifier class. The logic can be written to verify the details. All the claim class needs to be passed for authentication to become success. I had added issuer claim verifier which verifies iss value in payload
+This is used by the token services class to parse and decode token. It also validates the payload present in token using the claims set verifier present in section 4. We can create a custom token store in case the structure of your jwt is different and the spring default token store won’t be able to parse token properly. For illustration purposes, I created CustomTokenStore.
+This configuration is a normal spring security configuration where you define URL mappings and authentication values like roles, authorities, authenticated, permitted and deny all. As configured above, the URL starting with /user will be checked for valid for jwt token and for the URL starting with /public no authentication is required (ie no jwt token is required to be passed in header)
+Custom Token Store – Implementation
+public class CustomTokenStore implements TokenStore {               ----- 1
+
+    private final JwtTokenStore jwtTokenStore;   ----- 2
+    private Logger log= LoggerFactory.getLogger(CustomTokenStore.class);
+
+    public CustomTokenStore(JwtClaimsSetVerifier jwtClaimsSetVerifier,String pemFile) throws CustomTokenStoreException {
+        try {
+            JwtAccessTokenConverter accessTokenConverter = new JwtAccessTokenConverter(); --- 3
+            Resource resource = new ClassPathResource(pemFile);
+            String key =
+                    new BufferedReader(new InputStreamReader(resource.getInputStream(),
+                            StandardCharsets.UTF_8)).lines().collect(Collectors.joining());
+            RSAPublicKey publicKey=(RSAPublicKey) generatePublicKey(key); ---- 4
+            accessTokenConverter.setVerifier(new RsaVerifier(publicKey));
+            accessTokenConverter.setVerifierKey("-----BEGIN PUBLIC KEY-----\n" + new String(Base64.getEncoder().encode(publicKey.getEncoded())) + "\n-----END PUBLIC KEY-----");
+            accessTokenConverter.setJwtClaimsSetVerifier(jwtClaimsSetVerifier);  ---- 5
+            this.jwtTokenStore = new JwtTokenStore(accessTokenConverter);---- 6
+        }
+        catch(IOException e){
+            log.error("IOException when loading pem file "+pemFile,e);
+            throw new CustomTokenStoreException(e);
+        } catch (NoSuchAlgorithmException e) {
+            log.error("NoSuchAlgorithm exception when creating RSA public key",e);
+            throw new CustomTokenStoreException(e);
+        } catch (InvalidKeySpecException e) {
+            log.error("InvalidKeySpecException when creating RSA public key ",e);
+            throw new CustomTokenStoreException(e);
+        }
+    }
+For a custom implementation of the token store, the class should be of the type of TokenStore. This is done by implementing the Spring Token Store interface.
+JwtTokenStore is the spring implementation of TokenStore. There are many methods that need to be implemented when implementing the TokenStore interface. As I will be using spring default logic for parsing token, I had initialized JwtTokenStore and will be delegating all the implementations to it
+To initialize JwtTokenStore, we need  JwtAccessTokenConverter which is again spring class. It contains details like public key, claims set verifier required to parse and validate the token
+This is to create RSAPublicKey instance from the public pem file. The jwt token is signed using the corresponding private key of this public key and it can be successfully decoded using this public key. Using the wrong public key will result in failure and thus we can identify bogus jwt token generated from different servers. I had placed my public key file in project classpath and reading it using classpath resource. In organizations, there will be some rest endpoints from which you can download the public key.
+Note: You can cache the downloaded public key in your server to improve performance. But there is a possibility that the private key of the server gets updated and jwt token validation will fail even though its generated from the authentic server. To overcome this, if the validation fails for the first time, then you can download the public key from the server and validate it again.
+
+This is to set jwt claims verifier to verify certain jwt contents like resource id.
+Finally, jwt token store is initialized with access token converter having required values.
+@Override
+    public OAuth2Authentication readAuthentication(OAuth2AccessToken oAuth2AccessToken) {
+        return this.jwtTokenStore.readAuthentication(oAuth2AccessToken);
+    }
+
+    @Override
+    public OAuth2Authentication readAuthentication(String s) {
+        return this.jwtTokenStore.readAuthentication(s);
+    }
+
+    @Override
+    public void storeAccessToken(OAuth2AccessToken oAuth2AccessToken, OAuth2Authentication oAuth2Authentication) {
+        this.jwtTokenStore.storeAccessToken(oAuth2AccessToken,oAuth2Authentication);
+    }
+
+    @Override
+    public OAuth2AccessToken readAccessToken(String s) {
+        return this.jwtTokenStore.readAccessToken(s);
+    }
+These are some of the method implementations for token store. Note that I had delegated all of it to spring implementation of jwt token store. You can write your own logic as well.
+
+Testing the output
+Now all our configurations are completed and we can test if everything is working fine using postman.
+
+First, let’s try to access user URL without any jwt token and see the response
+
+
+Image 4
+As you can see, without jwt token the server throws 401 error. Now let’s add jwt token to our header. For this eg, I am creating jwt token from https://jwt.io/#debugger.
+
+
+Image 5
+In this, you can select the type of algorithm you want. I had chosen RS256. For RS256, you will be needing a public and private key to create a signature. I had created a self-signed public key and private key using OpenSSL and added them here. You can also add various header and payload properties as required and generate jwt here.
+
+As our application checks for iss in claims set verifier, I had added iss param in payload
+
+Now we add this jwt in authorization header params and access user URL, we can see the successful response.
+
+
+Image 6
+
+To check if claims are working fine, I will add different issuer params and create jwt token
+
+
+Image 7
+In this case, we are getting invalid token. Like this, you can add any claims verifier to validate the token properties before allowing access to our URLs.
+
+For the public URLs, we will get success response without any authentication header
+
+
+Image 8
+In my next article, I will show how to use the roles or scope present in this jwt token to perform authorization for the URLs using spring security hasAnyRole parameter config
+
+The entire project can be found in our GitHub repo https://github.com/prodmasters/Spring-Security-Oauth2-Resource
+
+That’s all folks! Happy learning 🙂
+Please provide your valuable comments for me to improve and suggestions if any
+
+
+
+
+Deepak Raj Ilangovan
+HashMap Structure
+PREVIOUS  POST
+HashMap Part-1
+
+NEXT  POST
+HashMap Part-2
+Leave a Reply
+Name
+*
+Email
+*
+Website
+Add Comment
+
+Save my name, email, and website in this browser for the next time I comment.
+
+Skip to content
