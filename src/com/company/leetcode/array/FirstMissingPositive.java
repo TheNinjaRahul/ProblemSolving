@@ -4,8 +4,6 @@ public class FirstMissingPositive {
     public static void main(String[] args) {
         int[] data = {3, 4, 6, 7};
         System.out.println(firstMissingPositive2(data));
-
-
     }
 
     public static int firstMissingPositive2(int[] nums) {
