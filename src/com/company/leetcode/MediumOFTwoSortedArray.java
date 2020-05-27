@@ -9,6 +9,8 @@ public class MediumOFTwoSortedArray {
 
     }
 
+
+
     public static double findMedianSortedArrays(int[] nums1, int[] nums2) {
         int x = nums1.length;
         int y = nums2.length;
@@ -47,7 +49,6 @@ public class MediumOFTwoSortedArray {
 //        int partionX=(low+high)/2;
 //        int partionY=((nums1.length+nums2.length+1)-partionX)/2;
         int xl = Integer.MIN_VALUE, xr = Integer.MIN_VALUE, yl = Integer.MIN_VALUE, yr = Integer.MIN_VALUE;
-
 
         while (low <= high) {
             int partionX = (low + high) / 2;
