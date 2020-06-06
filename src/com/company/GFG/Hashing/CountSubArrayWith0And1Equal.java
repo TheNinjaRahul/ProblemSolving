@@ -1,5 +1,10 @@
 package com.company.GFG.Hashing;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 /****
  * Subarrays with equal 1s and 0s
  * Given an array containing 0s and 1s. Find the number of subarrays having equal number of 0s and 1s.
@@ -39,4 +44,33 @@ package com.company.GFG.Hashing;
  * Testcase 2: The index range for the subarray is (3,4).
  */
 public class CountSubArrayWith0And1Equal {
+    public static void main(String[] args) {
+
+        int a[]={1,0,0,1,0,1,1};
+        System.out.println(countSubarrWithEqualZeroAndOne(a,a.length));
+    }
+
+    static int countSubarrWithEqualZeroAndOne(int arr[], int N)
+    {
+        Map<Integer,Integer> map=new HashMap<>();
+        int count=0;
+        int sum=0;
+        for(int i=0;i<N;i++){
+            if(arr[i]==0){
+                sum+=-1;
+            }else {
+                sum+=1;
+            }
+            if(sum==0){
+                count++;
+            }
+            if(map.containsKey(sum)) {
+                count+=map.get(sum);
+                map.put(sum,map.get(sum)+1);
+            }else{
+                map.put(sum,1);
+            }
+        }
+        return count;
+    }
 }
