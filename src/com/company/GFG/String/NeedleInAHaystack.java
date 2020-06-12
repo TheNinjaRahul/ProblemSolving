@@ -36,11 +36,39 @@ package com.company.GFG.String;
  */
 public class NeedleInAHaystack {
     public static void main(String[] args) {
-
+//        System.out.println(needleinHaystack("geeksforgeeks","geeks"));
+//        System.out.println(needleinHaystack("hellolola","lola"));
+        System.out.println(needleinHaystack("mississippi","issip"));
     }
 
-    public static int NeedleinHaystack(String haystack, String needle)
-    {
-        return 0;
+    public static int needleinHaystack(String haystack, String needle) {
+        int[] t = new int[needle.length()];
+
+        int i = 0, j = 1;
+        while (j < needle.length()) {
+            if (needle.charAt(i) == needle.charAt(j)) {
+                t[j] = i + 1;
+                i++;
+            } else {
+                i = 0;
+            }
+            j++;
+        }
+        i=0;j=0;
+        while(i<haystack.length()){
+            if(j==needle.length()){
+                return i-j;
+            }
+            if(haystack.charAt(i)==needle.charAt(j)){
+                j++;
+            }else{
+               if(j!=0){
+                   j=t[j-1];
+                   continue;
+               }
+            }
+            i++;
+        }
+        return j==needle.length() ? i-j : -1;
     }
 }

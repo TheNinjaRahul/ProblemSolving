@@ -1,4 +1,4 @@
-package com.company.GFG.sort;
+package com.company.leetcode.sort;
 
 import java.util.Arrays;
 
