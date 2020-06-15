@@ -31,48 +31,43 @@ package com.company.GFG.String;
  */
 public class LongestSubstringWithoutRepeatingCharacters {
     public static void main(String[] args) {
-        System.out.println(subsequenceLength("abac"));
+//        System.out.println(subsequenceLength("abac"));
         System.out.println(subsequenceLength("aabbcadba"));
         System.out.println(subsequenceLength("geeksforgeeks"));
         System.out.println(subsequenceLength("abbcdb"));
-
     }
 
     public static int subsequenceLength(String s) {
-
+        s=s.trim();
         if(s.length()==0){
             return 0;
         }
-
-        int max = 0;
+        int max = 1;
         int start = 0, end = 0;
         int alp[] = new int[26];
-        int i = 0, j = 0;
+        int i = 0, j = 1;
         if (alp[s.charAt(i) - 'a'] == 0) {
             alp[s.charAt(i) - 'a']++;
         }
         while (j < s.length()) {
-            if (i == j) {
-                j++;
-                continue;
-            }
 
-            if (alp[s.charAt(j) - 'a'] > 1) {
-                alp[s.charAt(i) - 'a']--;
-                i++;j++;
-            } else {
-                alp[s.charAt(j) - 'a']++;
-                if (alp[s.charAt(j) - 'a'] == 1) {
-                    start = i;
-                    end = j;
-                    if (max < (j - i)) {
-                        max = j - i;
-                    }
-                    j++;
+            alp[s.charAt(j)-'a']++;
+            if(alp[s.charAt(j)-'a']==2){
+                while(alp[s.charAt(j)-'a']!=1){
+                    alp[s.charAt(i)-'a']--;
+                    i++;
                 }
+
             }
+            if(max<(j-i+1)){
+                start=i;
+                end=j;
+                max=j-i+1;
+            }
+            j++;
         }
-        return max+1;
+        System.out.println(s.substring(start,end+1));
+        return max;
     }
 
 }
