@@ -35,9 +35,9 @@ package com.company.GFG.LinkList;
  */
 public class PairwiseSwapElements {
     public static void main(String[] args) {
-        Node head = new Node(1, new Node(2, new Node(3, new Node(4, new Node(5, new Node(6))))));
-//        Node f = pairwiseSwap(head);
-        Node f = pairSwap(head);
+        Node head = new Node(1, new Node(2, new Node(3, new Node(4, new Node(5,new Node(6,new Node(7)))))));
+//        Node f = rev(head);
+        Node f = reverseKNode(head,3);
         LinkListUtil.printList(f);
     }
 
@@ -69,66 +69,53 @@ public class PairwiseSwapElements {
     }
 
     public static Node reverseKNode(Node head, int k) {
-        {
-            Node prev, current, next;
-            if (head == null) {
-                return null;
-            }
-            if (head.next == null) {
-                return head;
-            }
+        if(head==null || head.next==null) return head;
 
-            Node result = head;
-            int ik = 1;
-            while (ik != k) {
-                result = result.next;
-                ik++;
+        Node res=null,last=null;
+        Node temp=head;
+        while(temp!=null){
+            int i=0;
+            Node t1=temp,p=null;
+            while(i<k && t1!=null){
+                p=t1;
+                t1=t1.next;
+                i++;
             }
-
-            prev = head;
-            current = head.next;
-            next = current.next;
-
-            while (current != null) {
-                int i = 1;
-                Node last = prev;
-                while (current != null && i != k) {
-                    i++;
-                    current.next = prev;
-                    prev = current;
-                    current = next;
-                    if (next == null) {
-                        break;
-                    }
-                    next = next.next;
-                }
-                i = 1;
-                if (current == null) {
-                    last.next = null;
-                    break;
-                }
-                Node temp = current;
-                while (i < k) {
-                    i++;
-                    if (temp.next == null) {
-                        temp = current;
-                        break;
-                    }
-                    temp = temp.next;
-                }
-                if (temp == current) {
-                    last.next = current;
-                    break;
-                }
-                last.next = temp;
-                prev = current;
-                current = current.next;
-                next = current.next;
+            p.next=null;
+            Node rev=reverseLinkList(temp);
+            temp=t1;
+            if(res==null){
+                res=rev;
+                last=rev;
+            }else{
+                last.next=rev;
             }
-
-            return result;
+            while(last.next!=null) last=last.next;
         }
+        return res;
+    }
 
+    private static Node reverseLinkList(Node t1) {
+        if(t1==null || t1.next==null) return t1;
+        Node t=t1;
+        Node p=t;
+        Node c=p.next;
+        if(c.next==null){
+            c.next=p;
+            p.next=null;
+            return c;
+        }
+        Node n=c.next;
+
+        while (c.next!=null){
+            c.next=p;
+            p=c;
+            c=n;
+            n=n.next;
+        }
+        c.next=p;
+        t1.next=null;
+        return c;
 
     }
 
