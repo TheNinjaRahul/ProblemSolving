@@ -5,9 +5,9 @@ import java.util.*;
 public class IsCousins {
 
     public static void main(String[] args) {
-        String s = "1 2 5 8 3 N 7 9 N N 4 N N N N 6";
-        Node root = DriverCode.buildTree(s);
-        System.out.println(isCousins2(root, 9, 4));
+//        String s = "1 2 5 8 3 N 7 9 N N 4 N N N N 6";
+//        Node root = DriverCode.buildTree(s);
+//        System.out.println(isCousins2(root, 9, 4));
     }
 
 

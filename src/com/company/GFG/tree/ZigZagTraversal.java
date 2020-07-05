@@ -2,6 +2,7 @@ package com.company.GFG.tree;
 
 import java.util.*;
 
+import com.company.util.Node;
 public class ZigZagTraversal {
     public static void main(String[] args) {
         Node root=DriverCode.buildTree("3 2 1");

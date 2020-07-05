@@ -5,8 +5,8 @@ import java.util.LinkedList;
 
 public class SpiralOrder {
     public static void main(String[] args) {
-        Node root=DriverCode.buildTree("1 2 3 4 5 6 7");
-        printSpiral(root);
+//        Node root=DriverCode.buildTree("1 2 3 4 5 6 7");
+//        printSpiral(root);
     }
     public static void printSpiral(Node node)
     {

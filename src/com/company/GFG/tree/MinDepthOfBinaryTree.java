@@ -2,9 +2,9 @@ package com.company.GFG.tree;
 
 public class MinDepthOfBinaryTree {
     public static void main(String[] args) {
-        Node root = DriverCode.buildTree("10 20"); //30 N 40 N 60 N N 2");
-
-        System.out.println(minDepth(root));
+//        Node root = DriverCode.buildTree("10 20"); //30 N 40 N 60 N N 2");
+//
+//        System.out.println(minDepth(root));
     }
 
     static int minDepth(Node root) {

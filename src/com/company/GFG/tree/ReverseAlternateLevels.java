@@ -1,10 +1,11 @@
 package com.company.GFG.tree;
+import com.company.util.Node;
 
 public class ReverseAlternateLevels {
     public static void main(String[] args) {
         Node root = DriverCode.buildTree("10 20 30 40 50 60 70 80 90 100 110 120 130 140 150");
         reverseAlternate(root);
-        TreeUtil.inOrderTraversal(root);
+//        TreeUtil.inOrderTraversal(root);
     }
 
     static void reverseAlternate(Node root) {
