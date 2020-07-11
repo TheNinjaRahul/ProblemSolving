@@ -3,8 +3,8 @@ package com.company.GFG.tree;
 import com.company.util.Node;
 public class TransformToSumTree {
     public static void main(String[] args) {
-        Node root=DriverCode.buildTree("10 20 30 40 60");
-        toSumTree(root);
+//        Node root=DriverCode.buildTree("10 20 30 40 60");
+//        toSumTree(root);
 //        TreeUtil.inOrderTraversal(root);
     }
 

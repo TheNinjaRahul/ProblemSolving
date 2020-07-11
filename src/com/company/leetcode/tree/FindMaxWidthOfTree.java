@@ -7,30 +7,30 @@ import java.util.Queue;
 
 public class FindMaxWidthOfTree {
     public static void main(String[] args) {
-        TreeNode root = new TreeNode(1, new TreeNode(2, new TreeNode(4), new TreeNode(5)), new TreeNode(3, new TreeNode(6), new TreeNode(7)));
+        TreeNode root = new TreeNode(1, new TreeNode(2, null, new TreeNode(5)), new TreeNode(3, new TreeNode(6), new TreeNode(7)));
         System.out.println(widthOfBinaryTree(root));
     }
 
 
     public static int widthOfBinaryTree(TreeNode root) {
-        Map<Integer,Integer[]> map=new HashMap<>();
-        generateValues(root,0,1,map);
-        int ans=0;
-        for(Integer[] values:map.values()){
-            ans=Math.max(ans,values[1]-values[0]+1);
+        Map<Integer, Integer[]> map = new HashMap<>();
+        generateValues(root, 0, 1, map);
+        int ans = 0;
+        for (Integer[] values : map.values()) {
+            ans = Math.max(ans, values[1] - values[0] + 1);
         }
         return ans;
     }
 
     private static void generateValues(TreeNode root, int row, int position, Map<Integer, Integer[]> map) {
 
-        if(root==null) return;
-        Integer[] current=map.getOrDefault(row,new Integer[2]);
-        if (current[0]==null || current[0]>position) current[0]=position;
-        if(current[1]==null || current[1]<position) current[1]=position;
-        map.put(row,current);
-        generateValues(root.left,row+1,position*2-1,map);
-        generateValues(root.right,row+1,position*2+1,map);
+        if (root == null) return;
+        Integer[] current = map.getOrDefault(row, new Integer[2]);
+        if (current[0] == null || current[0] > position) current[0] = position;
+        if (current[1] == null || current[1] < position) current[1] = position;
+        map.put(row, current);
+        generateValues(root.left, row + 1, position * 2 - 1, map);
+        generateValues(root.right, row + 1, position * 2 , map);
     }
 
     static class MyPair {
@@ -60,7 +60,7 @@ public class FindMaxWidthOfTree {
                     ans = Math.max(ans, end - begin + 1);
                 }
 
-                if (current.node.left != null) queue.add(new MyPair(current.node.left, current.position * 2-1));
+                if (current.node.left != null) queue.add(new MyPair(current.node.left, current.position * 2 - 1));
                 if (current.node.right != null) queue.add(new MyPair(current.node.right, current.position * 2));
             }
         }

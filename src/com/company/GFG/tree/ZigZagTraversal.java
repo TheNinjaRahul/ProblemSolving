@@ -5,8 +5,8 @@ import java.util.*;
 import com.company.util.Node;
 public class ZigZagTraversal {
     public static void main(String[] args) {
-        Node root=DriverCode.buildTree("3 2 1");
-        System.out.println(zigZagTraversal(root));
+//        Node root=DriverCode.buildTree("3 2 1");
+//        System.out.println(zigZagTraversal(root));
     }
 
     static ArrayList<Integer> zigZagTraversal(Node root) {
