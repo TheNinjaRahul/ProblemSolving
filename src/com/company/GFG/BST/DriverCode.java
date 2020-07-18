@@ -1,10 +1,10 @@
 // { Driver Code Starts
 //Initial Template for Java
-package com.company.GFG.tree;
+package com.company.GFG.BST;
+
+
 import java.util.LinkedList;
 import java.util.Queue;
-import java.io.*;
-
 
 
 class DriverCode {

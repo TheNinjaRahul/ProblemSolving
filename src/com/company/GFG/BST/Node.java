@@ -1,4 +1,4 @@
-package com.company.GFG.tree;
+package com.company.GFG.BST;
 
 class Node {
     int data;
