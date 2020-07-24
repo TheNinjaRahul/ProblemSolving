@@ -8,6 +8,8 @@ public class FindSingleNumberFromArray {
     }
 
 
+
+
     public static int singleNumber(int[] nums) {
 
         int ans=0;
