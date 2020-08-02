@@ -28,7 +28,6 @@ public class AddTwoBinaryNumber {
             i++;
         }
         return sb.toString();
-
     }
 
     public static String addBinary2(String a, String b) {
