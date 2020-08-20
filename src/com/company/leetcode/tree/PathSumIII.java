@@ -13,22 +13,28 @@ public class PathSumIII {
         System.out.println(pathSum(root, 8));
     }
 
-    static int resultCount = 0;
-
-    public static int pathSum(TreeNode root, int sum) {
-        if (root == null) return 0;
-        helper(root, sum, 0);
-        pathSum(root.left, sum);
-        pathSum(root.right, sum);
-        return resultCount;
+    static class mycount {
+        int count = 0;
     }
 
-    public static void helper(TreeNode root, int sum, int currentSum) {
+    public static int pathSum(TreeNode root, int sum) {
+        mycount m = new mycount();
+        if (root == null) return 0;
+        helper(root, sum, 0, m);
+        m.count += pathSum(root.left, sum);
+        m.count += pathSum(root.right, sum);
+        return m.count;
+    }
+
+    public static void helper(TreeNode root, int sum, int currentSum, mycount m) {
         if (root == null) return;
         currentSum += root.val;
-        if (currentSum == sum) resultCount++;
-        helper(root.left, sum, currentSum);
-        helper(root.right, sum, currentSum);
+        if (currentSum == sum) {
+            m.count++;
+            return;
+        }
+        helper(root.left, sum, currentSum, m);
+        helper(root.right, sum, currentSum, m);
     }
 
 }
