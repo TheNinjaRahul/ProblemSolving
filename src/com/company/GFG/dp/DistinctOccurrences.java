@@ -9,11 +9,34 @@ public class DistinctOccurrences {
 
     public static void main(String[] args) {
         DistinctOccurrences d = new DistinctOccurrences();
-        System.out.println(d.subsequenceCount("geeksforgeeks", "ge"));
+//        System.out.println(d.subsequenceCount("geeksforgeeks", "ge"));
+        System.out.println(d.subsequenceCount("rabbbit", "rabbit"));
     }
 
+    int subsequenceCount(String s, String t) {
 
-    int subsequenceCount(String S, String T) {
+        int dp[][] = new int[s.length() + 1][t.length() + 1];
+
+        for (int i = 0; i <= s.length(); i++) {
+            dp[i][0] = 1;
+        }
+
+        for (int i = 1; i <= s.length(); i++) {
+            for (int j = 1; j <= t.length(); j++) {
+                if (s.charAt(i - 1) == t.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1] + dp[i - 1][j];
+                } else {
+                    dp[i][j] = dp[i - 1][j];
+                }
+            }
+            System.out.println("**********************");
+            ArrayUtil.print(dp);
+        }
+        ArrayUtil.print(dp);
+        return dp[s.length()][t.length()];
+    }
+
+    int subsequenceCount2(String S, String T) {
         Map<String, Integer> map = new HashMap<>();
         return rec(S, T, map, S.length() - 1, T.length() - 1, T.length());
     }
@@ -41,7 +64,7 @@ public class DistinctOccurrences {
     }
 
 
-    int subsequenceCount2(String S, String T) {
+    int subsequenceCount3(String S, String T) {
         Map<String, Integer> map = new HashMap<>();
         return rec(S, T, map);
     }
