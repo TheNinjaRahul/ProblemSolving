@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
-public class InorderSuccessorInBST {
+public class  InorderSuccessorInBST {
     public static void main(String[] args) {
 
         Node root3 = DriverCode.buildTree("45 17 58 7 26 57 69 6 8");
