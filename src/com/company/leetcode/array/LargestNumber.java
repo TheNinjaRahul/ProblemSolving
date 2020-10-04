@@ -14,7 +14,7 @@ public class LargestNumber {
         String[] str = new String[nums.length];
 
         for (int i = 0; i < nums.length; i++) {
-            str[i] = String.valueOf(str[i]);
+            str[i] = String.valueOf(nums[i]);
         }
         Arrays.toString(str);
         for (int i = 0; i < nums.length; i++) {
