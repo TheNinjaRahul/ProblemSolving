@@ -13,8 +13,6 @@ public class LRU {
         lru.set(3,2);
         System.out.println(lru.get(2));
         System.out.println(lru.get(3));
-
-
     }
 
     LRU(int cap) {
