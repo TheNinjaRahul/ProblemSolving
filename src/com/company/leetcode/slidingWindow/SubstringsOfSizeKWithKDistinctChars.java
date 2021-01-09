@@ -1,6 +1,8 @@
 package com.company.leetcode.slidingWindow;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 public class SubstringsOfSizeKWithKDistinctChars {
     public static void main(String[] args) {
@@ -25,7 +27,6 @@ public class SubstringsOfSizeKWithKDistinctChars {
                     count--;
                 }
             }
-
             map.put(c, map.getOrDefault(c, 0) + 1);
             count++;
             if (count == k) {
