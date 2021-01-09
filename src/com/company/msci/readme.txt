@@ -1,11 +1,12 @@
 This problem is backtracking problem but here i need to print all possible dictionary words.
 approach 1:
     1)Backtracking + HashSet as dictionary word
-        Memory consuming and more possible word create checks.
+        Memory consuming as same prefix for possible dictionary words will have character which will occupy memory
+        and more possible words will also create more checks as dictionary have this word or not.
 approach 2:
     2) Backtracking + Trie data structure as optimal way of the solution.
-        Less memory and no check required as Trie node it self contains property as current character is end of the word or not
-        and we can use that directly.
+        Less memory and no check required as Trie node it self contains property as current character is end of the
+        dictionary word or not and we can use that property directly.
 
 So i have used trie data structure as optimal way of the solution.
 
