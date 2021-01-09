@@ -1,3 +1,29 @@
+Problem Definition:
+*********************************************************************************
+
+*Please read all given below given instruction and consider all scenarios to get the best score*
+
+Write a program that takes a number and produces all possible phrases consisting of words that match
+this number while using all digits and inserting spaces between words as needed.
+ 
+Use a digit to char mapping printed on the telephone keyboards and a word list as a dictionary
+(e.g. http://www.mieliestronk.com/corncob_lowercase.txt). Digit to char mapping is (like on the
+standard phone):
+ 
+2 =&gt; [ ‘a’, ‘b’, ‘c’ ]
+3 =&gt; [ ‘d’, ‘e’, ‘f’ ]
+...
+9 =&gt; [ ‘w’, ‘x’, ‘y’, ‘z’ ]
+ 
+For example, if input is “56835282” and dictionary contains words “love” and “java” and “lava”, the
+output must contain strings “love java” and “love lava”.
+Please provide a full solution. Please pay close attention to the performance. The code must work fast
+and be scalable. Please test on a long number (for instance 20 digits) and measure time.
+
+************************************************************************************************
+
+
+
 This problem is backtracking problem but here i need to print all possible dictionary words.
 approach 1:
     1)Backtracking + HashSet as dictionary word
@@ -9,6 +35,15 @@ approach 2:
         dictionary word or not and we can use that property directly.
 
 So i have used trie data structure as optimal way of the solution.
+
+
+Note:
+One word in dictionary contains '-'. "cross-bun"
+I have removed it from file as no special character allowed in dictionary words.
+
+Other thing works fine. I can create special character Trie as well for future enhancement.
+
+I just need to maintain full ASCII length trie array instead of 26 fix size array as solution.
 
 Following is the sample output:
 
@@ -61,10 +96,3 @@ Enter your input:
 0
 
 Process finished with exit code 0
-
-
-Note:
-One word in dictionary contains '-'. "cross-bun"
-I have removed it from file as no special character allowed in dictionary words.
-
-Other thing works fine. I can create special character Trie as well for future enhancement.
