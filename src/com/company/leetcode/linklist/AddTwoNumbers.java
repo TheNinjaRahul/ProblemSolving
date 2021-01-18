@@ -12,7 +12,6 @@ public class AddTwoNumbers {
         ListNode l2 = new ListNode(5, new ListNode(6, new ListNode(4)));
         ListNode f = addTwoNumbers(l1, l2);
         LinkListUtil.printList(f);
-
     }
 
     public static ListNode addTwoNumbers(ListNode l1, ListNode l2) {
@@ -40,9 +39,9 @@ public class AddTwoNumbers {
             ListNode head = new ListNode(prev.val / 10);
             head.next = prev;
             prev.val = prev.val % 10;
+            prev.next = head;
             prev = head;
         }
-
         return prev.val == 0 ? prev.next : prev;
     }
 }

@@ -38,13 +38,27 @@ So i have used trie data structure as optimal way of the solution.
 
 
 Note:
-One word in dictionary contains '-'. "cross-bun"
+One word in dictionary contains '-'. Word="cross-bun"
 I have removed it from file as no special character allowed in dictionary words.
 
 Other thing works fine. I can create special character Trie as well for future enhancement.
 
 I just need to maintain full ASCII length trie array instead of 26 fix size array as solution.
 
+
+How to Run:
+C:\Rahul\msci> javac .\KeyPadCombination.java
+C:\Rahul\msci> java -classpath . KeyPadCombination
+*********** MENU ***************
+1. Load dictionary
+2. Print All Possible Words
+0. Exit
+*********************************
+Enter your input:
+0
+PS C:\Rahul\msci>
+
+************************************************************************
 Following is the sample output:
 
 *********** MENU ***************
